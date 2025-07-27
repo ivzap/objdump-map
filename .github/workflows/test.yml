@@ -1,4 +1,4 @@
-name: C++ Build and Test
+name: C++ Build and Test (ubuntu-latest)
 
 on:
   push:
