@@ -1,0 +1,25 @@
+name: C++ Build and Test
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Build
+        run: |
+          g++ -std=c++17 -I src -o test_parser test_parser.cpp
+
+      - name: Run tests
+        run: ./test_parser tests/sample1.txt tests/sample2.txt
+
