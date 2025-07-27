@@ -1,0 +1,10 @@
+
+usr/include/c++/13/bits/A.h:
+A.h                             317              0x6c20               x
+A.h                             318              0x6c34               x
+A.h                             319              0x6c47               x
+A.h                               -              0x6c4a
+
+/usr/include/c++/13/bits/B.h:
+B.h                             398              0x6c4a               x
+B.h                             402              0x6c5b               x

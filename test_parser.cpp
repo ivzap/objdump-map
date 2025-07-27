@@ -1,33 +1,55 @@
 #include <iostream>
 #include <string>
 #include "ObjDumpAddressMap.hpp"  // Your header file with the classes
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+std::vector<std::string> get_files_in_dir(const std::string& path) {
+    std::vector<std::string> files;
+
+    for (const auto& entry : fs::directory_iterator(path)) {
+        if (entry.is_regular_file()) {
+            files.push_back(entry.path().filename().string());
+        }
+    }
+
+    return files;
+}
 
 int main(int argc, char** argv) {
-    if(argc < 2) {
-        std::cerr << "Provide objdump test file(s) as arguments\n";
-        return 1;
-    }
-
     bool all_passed = true;
+    std::vector<std::string> files = get_files_in_dir("./tests/input");
 
-    for(int i=1; i < argc; i++) {
-        std::string filepath = argv[i];
-        auto result = ObjDump::ObjDumpParser::parse(filepath);
+    for(auto filename: files) {
+        auto map = ObjDump::ObjDumpAddressMap("./tests/input/" + filename);
+        std::ifstream expected_file("./tests/expect/" + filename);
+        
+        std::ostringstream test_got, test_expected;
 
-        std::cout << "Results for file: " << filepath << "\n";
+        test_expected << expected_file.rdbuf();
 
-        for(auto& [address, info] : std::get<0>(result)) {
-            std::cout << "[Address]: 0x" << std::hex << address
-                      << ", [filepath]: " << std::get<2>(result)[info.fileID]
-                      << ", [line number]: " << std::dec << info.lineNumber << "\n";
+        for (auto& [address, info] : map) {
+            test_got << std::hex << address << ", "
+                << map.get_path(info.fileID) << std::dec 
+                << info.line_number << "\n";
         }
 
-        // Add assertions here if you want, e.g. check map size > 0 etc.
-        if(std::get<0>(result).empty()) {
-            std::cerr << "Parse failed or empty for " << filepath << "\n";
-            all_passed = false;
+        bool test_result = test_expected.str() == test_got.str();
+
+        if(!test_result){
+            printf("\033[31m[%s test failed!]\033[0m\n", filename.c_str());
+            printf("got:\n%s\n", test_got.str().c_str());
+            printf("expected:\n%s\n", test_expected.str().c_str());
         }
+
+        all_passed &= test_result;
     }
+    
+    if(all_passed)
+        printf("\033[32m[all tests passed!]\033[0m\n");
+    else
+        printf("\033[31m[some or all tests failed!]\033[0m\n");
 
-    return all_passed ? 0 : 1;
+    return all_passed;
 }

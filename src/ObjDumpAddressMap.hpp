@@ -1,4 +1,5 @@
 #include <string>
+#include <map>
 #include <unordered_map>
 #include <cstdint>
 #include <fstream>
@@ -11,7 +12,7 @@
 #define u_map unordered_map
 
 struct AddressInfo {
-    uint32_t lineNumber = 0;
+    uint32_t line_number = 0;
     uint32_t fileID = 0;
 };
 
@@ -39,10 +40,14 @@ bool try_stoul(const std::string& input, int base, uint64_t& output) {
 
 
 namespace ObjDump { 
-    
+
     using namespace std;
 
-    typedef tuple<u_map<uint64_t, AddressInfo>, u_map<string, uint32_t>, u_map<uint32_t, string>> ParseResult;
+    typedef tuple<
+        map<uint64_t, AddressInfo>, 
+        u_map<string, uint32_t>, 
+        u_map<uint32_t, string>
+    > ParseResult;
 
     enum ParseState {
         FOUND_FILENAME,
@@ -110,9 +115,9 @@ namespace ObjDump {
     class ObjDumpAddressMap {
         private:
             string dumpPath;
-            unordered_map<uint64_t, AddressInfo> addrMap;
-            unordered_map<string, uint32_t> fileIDs;
-            unordered_map<uint32_t, string> filePaths;
+            map<uint64_t, AddressInfo> addrMap;
+            u_map<string, uint32_t> fileIDs;
+            u_map<uint32_t, string> filePaths;
         public:
             ObjDumpAddressMap(string path) : dumpPath(path){
                 auto result = ObjDumpParser::parse(path);
