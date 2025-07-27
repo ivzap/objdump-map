@@ -51,5 +51,5 @@ int main(int argc, char** argv) {
     else
         printf("\033[31m[some or all tests failed!]\033[0m\n");
 
-    return all_passed;
+    return !all_passed; // 1 triggers test failure
 }
