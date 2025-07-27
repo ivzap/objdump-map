@@ -21,5 +21,5 @@ jobs:
           g++ -std=c++17 -I src -o test_parser test_parser.cpp
 
       - name: Run tests
-        run: ./test_parser tests/sample1.txt tests/sample2.txt
+        run: ./test_parser
 
