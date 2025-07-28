@@ -30,7 +30,7 @@ bool try_stoui(const std::string& input, int base, uint32_t& output) {
 bool try_stoul(const std::string& input, int base, uint64_t& output) {
     try {
         std::size_t pos = 0;
-        output = std::stoi(input, &pos, base);
+        output = std::stoull(input, &pos, base);
 
         return pos == input.size();
     } catch (...) {
@@ -119,6 +119,8 @@ namespace ObjDump {
             u_map<string, uint32_t> fileIDs;
             u_map<uint32_t, string> filePaths;
         public:
+            ObjDumpAddressMap() = default;
+
             ObjDumpAddressMap(string path) : dumpPath(path){
                 auto result = ObjDumpParser::parse(path);
                 tie(addrMap, fileIDs, filePaths) = move(result);
@@ -142,6 +144,10 @@ namespace ObjDump {
 
             AddressInfo& operator[](uint64_t addr) {
                 return addrMap[addr];
+            }
+
+            bool contains(uint64_t addr){
+                return addrMap.count(addr) > 0;
             }
 
             auto begin() const { return addrMap.begin(); }
