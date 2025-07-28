@@ -90,8 +90,11 @@ namespace ObjDump {
 
                         // split line by empty spaces
                         vector<string> tokens = tokenize_line(line);
-                        if(!tokens.empty()){
+                        if(tokens.size() == 1){
+                            // filenames always have only one token on their line
                             current_filename = tokens[0];
+                        } else {
+                            current_state = ParseState::LOOKING;
                         }
                     } else {
                         if(line.empty()){
