@@ -6,20 +6,42 @@ on:
       - '**'
 
 jobs:
-  build-and-test:
+  build-with-gcc:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential
-
-      - name: Build
+      - name: Install GCC and dependencies
         run: |
-          g++ -std=c++17 -I src -o test_parser test_parser.cpp
+          sudo apt-get update
+          sudo apt-get install -y build-essential
 
-      - name: Run tests
-        run: ./test_parser
+      - name: Build with GCC
+        run: |
+          g++ -std=c++17 -I src -o gcc_test_parser test_parser.cpp
+
+      - name: Run tests (GCC build)
+        run: ./gcc_test_parser
+
+
+  build-with-clang:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Clang and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang build-essential
+
+      - name: Build with Clang
+        run: |
+          clang++ -std=c++17 -I src -o clang_test_parser test_parser.cpp
+
+      - name: Run tests (Clang build)
+        run: ./clang_test_parser
 
